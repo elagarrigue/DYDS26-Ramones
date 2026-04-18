@@ -82,7 +82,7 @@ desktopMain/
    - `GetPopularMoviesUseCase.kt`: Orquestar la obtención y filtrado de películas
    - `GetMovieDetailUseCase.kt`: Orquestar la obtención de detalles de una película
 
-### Etapa 3: Implementar la Capa Data
+### [COMPLETADA] Etapa 3: Implementar la Capa Data
 **Objetivo:** Abstraer la lógica de acceso a datos.
 
 #### Tareas:
@@ -101,7 +101,7 @@ desktopMain/
    - Orquestar llamadas a `RemoteMoviesDataSource` y `LocalMoviesCache`
    - Manejar lógica de sorting y mapping
 
-### Etapa 4: Refactorizar Presentation Layer
+### [COMPLETADA] Etapa 4: Refactorizar Presentation Layer
 **Objetivo:** ViewModels deben usar casos de uso, no datos directamente.
 
 #### Tareas:
