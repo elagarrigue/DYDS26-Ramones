@@ -35,7 +35,7 @@ desktopMain/
 
 ## Etapas de Implementación
 
-### Etapa 1: Crear Estructura de Directorios y Mover Archivos
+### [COMPLETADA] Etapa 1: Crear Estructura de Directorios y Mover Archivos
 **Objetivo:** Organizar el proyecto en capas sin modificar código.
 
 #### Tareas:
@@ -64,7 +64,7 @@ desktopMain/
 3. Crear archivo placeholder:
    - `/data/MoviesRepositoryImpl.kt`
 
-### Etapa 2: Separar Responsabilidades en Domain
+### [COMPLETADA] Etapa 2: Separar Responsabilidades en Domain
 **Objetivo:** Definir las interfaces y entidades de dominio.
 
 #### Tareas:
@@ -172,4 +172,3 @@ desktopMain/
 - Presentation → Data (nunca debe depender directamente)
 - Domain → Data (nunca debe depender directamente)
 - Domain → Presentation (nunca debe depender)
-
