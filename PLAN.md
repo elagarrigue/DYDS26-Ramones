@@ -123,7 +123,7 @@ desktopMain/
    - `Navigation.kt`: Enrutamiento entre pantallas
    - `CommonComposables.kt`: Componentes reutilizables
 
-### Etapa 5: Actualizar Inyección de Dependencias
+### [COMPLETADA] Etapa 5: Actualizar Inyección de Dependencias
 **Objetivo:** Proporcionar instancias correctas a todas las capas.
 
 #### Tareas:
@@ -135,8 +135,10 @@ desktopMain/
    - Instanciar casos de uso (`GetPopularMoviesUseCase`, `GetMovieDetailUseCase`)
    - Proporcionar `MoviesViewModel` con casos de uso
 
-### Etapa 6: Testing y Validación
+### [IMPLEMENTADA - VALIDACION PENDIENTE EN ENTORNO LOCAL] Etapa 6: Testing y Validación
 **Objetivo:** Asegurar que la aplicación siga funcionando correctamente.
+
+> Se implementaron tests de repositorio y ViewModel en `composeApp/src/desktopTest/kotlin/TestExample.kt`. La ejecución de compilación/tests queda pendiente en este entorno hasta configurar Java (`JAVA_HOME`).
 
 #### Tareas:
 1. Compilar el proyecto

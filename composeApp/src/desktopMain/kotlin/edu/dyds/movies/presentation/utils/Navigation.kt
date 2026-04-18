@@ -11,7 +11,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import edu.dyds.movies.di.MoviesDependencyInjector.getMoviesViewModel
-import edu.dyds.movies.domain.entity.Movie
+import edu.dyds.movies.presentation.MoviesViewModel
 import edu.dyds.movies.presentation.detail.DetailScreen
 import edu.dyds.movies.presentation.home.HomeScreen
 
@@ -24,17 +24,21 @@ private const val MOVIE_ID = "movieId"
 @Composable
 fun Navigation() {
     val navController = rememberNavController()
+    val moviesViewModel = getMoviesViewModel()
 
     NavHost(navController = navController, startDestination = HOME) {
-        homeDestination(navController)
-        detailDestination(navController)
+        homeDestination(navController, moviesViewModel)
+        detailDestination(navController, moviesViewModel)
     }
 }
 
-private fun NavGraphBuilder.homeDestination(navController: NavHostController) {
+private fun NavGraphBuilder.homeDestination(
+    navController: NavHostController,
+    moviesViewModel: MoviesViewModel
+) {
     composable(HOME) {
         HomeScreen(
-            viewModel = getMoviesViewModel(),
+            viewModel = moviesViewModel,
             onGoodMovieClick = {
                 navController.navigate("$DETAIL/${it.id}")
             }
@@ -42,7 +46,10 @@ private fun NavGraphBuilder.homeDestination(navController: NavHostController) {
     }
 }
 
-private fun NavGraphBuilder.detailDestination(navController: NavHostController) {
+private fun NavGraphBuilder.detailDestination(
+    navController: NavHostController,
+    moviesViewModel: MoviesViewModel
+) {
     composable(
         route = "$DETAIL/{$MOVIE_ID}",
         arguments = listOf(navArgument(MOVIE_ID) { type = NavType.IntType })
@@ -50,7 +57,7 @@ private fun NavGraphBuilder.detailDestination(navController: NavHostController) 
         val movieId = backstackEntry.arguments?.getInt(MOVIE_ID)
 
         movieId?.let {
-            DetailScreen(getMoviesViewModel(), it, onBack = { navController.popBackStack() })
+            DetailScreen(moviesViewModel, it, onBack = { navController.popBackStack() })
         }
     }
 }
