@@ -6,7 +6,7 @@ class LocalMoviesCacheImpl : LocalMoviesCache {
     private val cacheMovies: MutableList<RemoteMovie> = mutableListOf()
 
     override fun getCachedMovies(): List<RemoteMovie>? {
-        return if (cacheMovies.isNotEmpty()) cacheMovies else null
+        return cacheMovies.ifEmpty { null }
     }
 
     override fun saveMovies(movies: List<RemoteMovie>) {
