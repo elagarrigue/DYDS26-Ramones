@@ -1,4 +1,3 @@
-// Placeholder for MoviesRepositoryImpl.kt
 package edu.dyds.movies.data
 
 import edu.dyds.movies.data.external.RemoteMoviesDataSource
