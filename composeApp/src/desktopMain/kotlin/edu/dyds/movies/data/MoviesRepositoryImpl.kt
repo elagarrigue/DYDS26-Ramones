@@ -15,24 +15,24 @@ class MoviesRepositoryImpl(
 ) : MoviesRepository {
 
     override suspend fun getPopularMovies(): List<QualifiedMovie> {
-        val remoteMovies = localMoviesCache.getCachedMovies() ?: run {
-            val fetched = remoteMoviesDataSource.getPopularMovies()
+        val movies = localMoviesCache.getCachedMovies() ?: run {
+            val fetched = remoteMoviesDataSource.getPopularMovies().map { it.toDomainMovie() }
             localMoviesCache.saveMovies(fetched)
             fetched
         }
-        return remoteMovies.sortAndMap()
+        return movies.sortAndMap()
     }
 
     override suspend fun getMovieDetails(id: Int): Movie? {
         return remoteMoviesDataSource.getMovieDetails(id)?.toDomainMovie()
     }
 
-    private fun List<edu.dyds.movies.data.external.RemoteMovie>.sortAndMap(): List<QualifiedMovie> {
+    private fun List<Movie>.sortAndMap(): List<QualifiedMovie> {
         return this
             .sortedByDescending { it.voteAverage }
             .map {
                 QualifiedMovie(
-                    movie = it.toDomainMovie(),
+                    movie = it,
                     isGoodMovie = it.voteAverage >= MIN_VOTE_AVERAGE
                 )
             }
