@@ -13,8 +13,4 @@ class LocalMoviesCacheImpl : LocalMoviesCache {
         cacheMovies.clear()
         cacheMovies.addAll(movies)
     }
-
-    override fun clearCache() {
-        cacheMovies.clear()
-    }
 }
