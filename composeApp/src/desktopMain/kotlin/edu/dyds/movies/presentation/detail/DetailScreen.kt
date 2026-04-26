@@ -25,16 +25,16 @@ import androidx.compose.ui.unit.sp
 import coil3.compose.AsyncImage
 import dydsproject.composeapp.generated.resources.*
 import edu.dyds.movies.domain.entity.Movie
-import edu.dyds.movies.presentation.MoviesViewModel
+import edu.dyds.movies.presentation.detail.DetailViewModel
 import edu.dyds.movies.presentation.utils.LoadingIndicator
 import edu.dyds.movies.presentation.utils.NoResults
 import org.jetbrains.compose.resources.stringResource
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun DetailScreen(viewModel: MoviesViewModel, id: Int, onBack: () -> Unit) {
+fun DetailScreen(viewModel: DetailViewModel, id: Int, onBack: () -> Unit) {
 
-    val state by viewModel.movieDetailStateFlow.collectAsState(MoviesViewModel.MovieDetailUiState())
+    val state by viewModel.movieDetailStateFlow.collectAsState(DetailViewModel.DetailUiState())
 
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
 

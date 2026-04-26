@@ -10,8 +10,10 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
-import edu.dyds.movies.di.MoviesDependencyInjector.getMoviesViewModel
-import edu.dyds.movies.presentation.MoviesViewModel
+import edu.dyds.movies.di.MoviesDependencyInjector.getHomeViewModel
+import edu.dyds.movies.di.MoviesDependencyInjector.getDetailViewModel
+import edu.dyds.movies.presentation.home.HomeViewModel
+import edu.dyds.movies.presentation.detail.DetailViewModel
 import edu.dyds.movies.presentation.detail.DetailScreen
 import edu.dyds.movies.presentation.home.HomeScreen
 
@@ -24,21 +26,22 @@ private const val MOVIE_ID = "movieId"
 @Composable
 fun Navigation() {
     val navController = rememberNavController()
-    val moviesViewModel = getMoviesViewModel()
+    val homeViewModel = getHomeViewModel()
+    val detailViewModel = getDetailViewModel()
 
     NavHost(navController = navController, startDestination = HOME) {
-        homeDestination(navController, moviesViewModel)
-        detailDestination(navController, moviesViewModel)
+        homeDestination(navController, homeViewModel)
+        detailDestination(navController, detailViewModel)
     }
 }
 
 private fun NavGraphBuilder.homeDestination(
     navController: NavHostController,
-    moviesViewModel: MoviesViewModel
+    homeViewModel: HomeViewModel
 ) {
     composable(HOME) {
         HomeScreen(
-            viewModel = moviesViewModel,
+            viewModel = homeViewModel,
             onGoodMovieClick = {
                 navController.navigate("$DETAIL/${it.id}")
             }
@@ -48,7 +51,7 @@ private fun NavGraphBuilder.homeDestination(
 
 private fun NavGraphBuilder.detailDestination(
     navController: NavHostController,
-    moviesViewModel: MoviesViewModel
+    detailViewModel: DetailViewModel
 ) {
     composable(
         route = "$DETAIL/{$MOVIE_ID}",
@@ -57,7 +60,7 @@ private fun NavGraphBuilder.detailDestination(
         val movieId = backstackEntry.arguments?.getInt(MOVIE_ID)
 
         movieId?.let {
-            DetailScreen(moviesViewModel, it, onBack = { navController.popBackStack() })
+            DetailScreen(detailViewModel, it, onBack = { navController.popBackStack() })
         }
     }
 }
