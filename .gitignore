@@ -97,6 +97,3 @@ local.properties
 .idea/codeStyles/
 .idea/misc.xml
 .idea/IntelliLang.xml
-
-# Plan file
-PLAN.MD
