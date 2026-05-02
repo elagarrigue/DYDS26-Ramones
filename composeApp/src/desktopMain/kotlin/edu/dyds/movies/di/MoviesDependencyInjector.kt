@@ -3,12 +3,14 @@ package edu.dyds.movies.di
 import androidx.compose.runtime.Composable
 import androidx.lifecycle.viewmodel.compose.viewModel
 import edu.dyds.movies.data.MoviesRepositoryImpl
+import edu.dyds.movies.data.external.RemoteMoviesDataSource
 import edu.dyds.movies.data.external.RemoteMoviesDataSourceImpl
-import edu.dyds.movies.data.local.LocalMoviesCacheImpl
+import edu.dyds.movies.data.local.LocalMoviesDataSource
+import edu.dyds.movies.data.local.LocalMoviesDataSourceImpl
 import edu.dyds.movies.domain.repository.MoviesRepository
 import edu.dyds.movies.domain.usecase.GetMovieDetailUseCase
-import edu.dyds.movies.domain.usecase.GetPopularMoviesUseCase
 import edu.dyds.movies.domain.usecase.GetMovieDetailUseCaseImpl
+import edu.dyds.movies.domain.usecase.GetPopularMoviesUseCase
 import edu.dyds.movies.domain.usecase.GetPopularMoviesUseCaseImpl
 import edu.dyds.movies.presentation.home.HomeViewModel
 import edu.dyds.movies.presentation.detail.DetailViewModel
@@ -42,15 +44,15 @@ object MoviesDependencyInjector {
             }
         }
 
-    private val remoteMoviesDataSource = RemoteMoviesDataSourceImpl(tmdbHttpClient)
+    private val remoteMoviesDataSource: RemoteMoviesDataSource = RemoteMoviesDataSourceImpl(tmdbHttpClient)
 
-    private val localMoviesCache = LocalMoviesCacheImpl()
+    private val localMoviesDataSource: LocalMoviesDataSource = LocalMoviesDataSourceImpl()
 
-    private val moviesRepository: MoviesRepository = MoviesRepositoryImpl(remoteMoviesDataSource, localMoviesCache)
+    private val moviesRepository: MoviesRepository = MoviesRepositoryImpl(remoteMoviesDataSource, localMoviesDataSource)
 
-    private val getPopularMoviesUseCase = GetPopularMoviesUseCaseImpl(moviesRepository)
+    private val getPopularMoviesUseCase: GetPopularMoviesUseCase = GetPopularMoviesUseCaseImpl(moviesRepository)
 
-    private val getMovieDetailUseCase = GetMovieDetailUseCaseImpl(moviesRepository)
+    private val getMovieDetailUseCase: GetMovieDetailUseCase = GetMovieDetailUseCaseImpl(moviesRepository)
 
     @Composable
     fun getHomeViewModel(): HomeViewModel {

@@ -2,7 +2,7 @@ package edu.dyds.movies.data.local
 
 import edu.dyds.movies.domain.entity.Movie
 
-class LocalMoviesCacheImpl : LocalMoviesCache {
+class LocalMoviesDataSourceImpl : LocalMoviesDataSource {
     private val cacheMovies: MutableList<Movie> = mutableListOf()
 
     override fun getCachedMovies(): List<Movie>? {
