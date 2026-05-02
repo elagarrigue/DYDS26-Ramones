@@ -5,8 +5,8 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import edu.dyds.movies.data.MoviesRepositoryImpl
 import edu.dyds.movies.data.external.RemoteMoviesDataSource
 import edu.dyds.movies.data.external.RemoteMoviesDataSourceImpl
-import edu.dyds.movies.data.local.LocalMoviesDataSource
-import edu.dyds.movies.data.local.LocalMoviesDataSourceImpl
+import edu.dyds.movies.data.local.LocalMoviesCache
+import edu.dyds.movies.data.local.LocalMoviesCacheImpl
 import edu.dyds.movies.domain.repository.MoviesRepository
 import edu.dyds.movies.domain.usecase.GetMovieDetailUseCase
 import edu.dyds.movies.domain.usecase.GetMovieDetailUseCaseImpl
@@ -46,9 +46,9 @@ object MoviesDependencyInjector {
 
     private val remoteMoviesDataSource: RemoteMoviesDataSource = RemoteMoviesDataSourceImpl(tmdbHttpClient)
 
-    private val localMoviesDataSource: LocalMoviesDataSource = LocalMoviesDataSourceImpl()
+    private val localMoviesCache: LocalMoviesCache = LocalMoviesCacheImpl()
 
-    private val moviesRepository: MoviesRepository = MoviesRepositoryImpl(remoteMoviesDataSource, localMoviesDataSource)
+    private val moviesRepository: MoviesRepository = MoviesRepositoryImpl(remoteMoviesDataSource, localMoviesCache)
 
     private val getPopularMoviesUseCase: GetPopularMoviesUseCase = GetPopularMoviesUseCaseImpl(moviesRepository)
 
