@@ -1,6 +1,6 @@
 @file:Suppress("FunctionName")
 
-package edu.dyds.movies
+package edu.dyds.movies.presentation.utils
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.Button

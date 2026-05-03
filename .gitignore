@@ -1,8 +1,8 @@
-
 # Covers JetBrains IDEs: IntelliJ, RubyMine, PhpStorm, AppCode, PyCharm, CLion, Android Studio, WebStorm and Rider
 # Reference: https://intellij-support.jetbrains.com/hc/en-us/articles/206544839
 
 # User-specific stuff
+.idea/
 .idea/**/workspace.xml
 .idea/**/tasks.xml
 .idea/**/usage.statistics.xml
@@ -93,5 +93,7 @@ local.properties
 .idea/AndroidProjectSystem.xml
 
 # Code style and JDK config (machine-specific)
+.idea/*
 .idea/codeStyles/
 .idea/misc.xml
+.idea/IntelliLang.xml
