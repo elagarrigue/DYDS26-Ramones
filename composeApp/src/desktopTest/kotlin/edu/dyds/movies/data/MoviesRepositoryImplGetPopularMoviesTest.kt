@@ -2,7 +2,7 @@ package edu.dyds.movies.data
 
 import edu.dyds.movies.data.external.RemoteMovie
 import edu.dyds.movies.data.external.RemoteMoviesDataSource
-import edu.dyds.movies.data.local.LocalMoviesCache
+import edu.dyds.movies.data.local.LocalMoviesDataSource
 import edu.dyds.movies.domain.entity.Movie
 import kotlinx.coroutines.test.runTest
 import kotlin.test.Test
@@ -23,9 +23,9 @@ class MoviesRepositoryImplGetPopularMoviesTest {
         override suspend fun getMovieDetails(id: Int): RemoteMovie? = movieDetail
     }
 
-    private class FakeLocalMoviesCache(
+    private class FakeLocalMoviesDataSource(
         initialMovies: List<Movie>? = null
-    ) : LocalMoviesCache {
+    ) : LocalMoviesDataSource {
         private var cached: MutableList<Movie>? = initialMovies?.toMutableList()
         val savedMovies: List<Movie>? get() = cached?.toList()
 
@@ -74,7 +74,7 @@ class MoviesRepositoryImplGetPopularMoviesTest {
         // Arrange
         val remoteMovies = listOf(makeRemoteMovie(1), makeRemoteMovie(2))
         val remote = FakeRemoteMoviesDataSource(popularMovies = remoteMovies)
-        val cache = FakeLocalMoviesCache(initialMovies = null)
+        val cache = FakeLocalMoviesDataSource(initialMovies = null)
         val repository = MoviesRepositoryImpl(remote, cache)
 
         // Act
@@ -91,7 +91,7 @@ class MoviesRepositoryImplGetPopularMoviesTest {
         // Arrange
         val remoteMovies = listOf(makeRemoteMovie(1), makeRemoteMovie(2))
         val remote = FakeRemoteMoviesDataSource(popularMovies = remoteMovies)
-        val cache = FakeLocalMoviesCache(initialMovies = null)
+        val cache = FakeLocalMoviesDataSource(initialMovies = null)
         val repository = MoviesRepositoryImpl(remote, cache)
 
         // Act
@@ -107,7 +107,7 @@ class MoviesRepositoryImplGetPopularMoviesTest {
         // Arrange
         val cachedMovies = listOf(makeMovie(10), makeMovie(20))
         val remote = FakeRemoteMoviesDataSource(popularMovies = listOf(makeRemoteMovie(99)))
-        val cache = FakeLocalMoviesCache(initialMovies = cachedMovies)
+        val cache = FakeLocalMoviesDataSource(initialMovies = cachedMovies)
         val repository = MoviesRepositoryImpl(remote, cache)
 
         // Act
@@ -126,7 +126,7 @@ class MoviesRepositoryImplGetPopularMoviesTest {
         val remote = FakeRemoteMoviesDataSource(
             popularMovies = listOf(makeRemoteMovie(id = 42, title = "Inception"))
         )
-        val cache = FakeLocalMoviesCache()
+        val cache = FakeLocalMoviesDataSource()
         val repository = MoviesRepositoryImpl(remote, cache)
 
         // Act
@@ -150,7 +150,7 @@ class MoviesRepositoryImplGetPopularMoviesTest {
     fun `cuando remoto retorna lista vacia, retorna vacio y guarda vacio en cache`() = runTest {
         // Arrange
         val remote = FakeRemoteMoviesDataSource(popularMovies = emptyList())
-        val cache = FakeLocalMoviesCache()
+        val cache = FakeLocalMoviesDataSource()
         val repository = MoviesRepositoryImpl(remote, cache)
 
         // Act

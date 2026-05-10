@@ -2,7 +2,7 @@ package edu.dyds.movies.data
 
 import edu.dyds.movies.data.external.RemoteMovie
 import edu.dyds.movies.data.external.RemoteMoviesDataSource
-import edu.dyds.movies.data.local.LocalMoviesCache
+import edu.dyds.movies.data.local.LocalMoviesDataSource
 import edu.dyds.movies.domain.entity.Movie
 import kotlinx.coroutines.test.runTest
 import kotlin.test.Test
@@ -24,9 +24,9 @@ class MoviesRepositoryImplGetMovieDetailsTest {
         }
     }
 
-    private class FakeLocalMoviesCache(
+    private class FakeLocalMoviesDataSource(
         initialMovies: List<Movie>? = null
-    ) : LocalMoviesCache {
+    ) : LocalMoviesDataSource {
         private var cached: MutableList<Movie>? = initialMovies?.toMutableList()
         val savedMovies: List<Movie>? get() = cached?.toList()
         var getCachedMoviesCalls = 0
@@ -65,7 +65,7 @@ class MoviesRepositoryImplGetMovieDetailsTest {
         // Arrange
         val remoteMovie = makeRemoteMovie(id = 5, title = "The Matrix")
         val remote = FakeRemoteMoviesDataSource(movieDetail = remoteMovie)
-        val cache = FakeLocalMoviesCache()
+        val cache = FakeLocalMoviesDataSource()
         val repository = MoviesRepositoryImpl(remote, cache)
 
         // Act
@@ -81,7 +81,7 @@ class MoviesRepositoryImplGetMovieDetailsTest {
     fun `cuando remoto retorna null, retorna null`() = runTest {
         // Arrange
         val remote = FakeRemoteMoviesDataSource(movieDetail = null)
-        val cache = FakeLocalMoviesCache()
+        val cache = FakeLocalMoviesDataSource()
         val repository = MoviesRepositoryImpl(remote, cache)
 
         // Act
@@ -96,7 +96,7 @@ class MoviesRepositoryImplGetMovieDetailsTest {
         // Arrange
         val remoteMovie = makeRemoteMovie(id = 7, title = "Interstellar")
         val remote = FakeRemoteMoviesDataSource(movieDetail = remoteMovie)
-        val cache = FakeLocalMoviesCache()
+        val cache = FakeLocalMoviesDataSource()
         val repository = MoviesRepositoryImpl(remote, cache)
 
         // Act
@@ -120,7 +120,7 @@ class MoviesRepositoryImplGetMovieDetailsTest {
         // Arrange
         val remoteMovie = makeRemoteMovie(id = 3)
         val remote = FakeRemoteMoviesDataSource(movieDetail = remoteMovie)
-        val cache = FakeLocalMoviesCache()
+        val cache = FakeLocalMoviesDataSource()
         val repository = MoviesRepositoryImpl(remote, cache)
 
         // Act
