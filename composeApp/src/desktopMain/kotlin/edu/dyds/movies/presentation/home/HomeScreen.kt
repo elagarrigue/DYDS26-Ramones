@@ -39,7 +39,7 @@ fun HomeScreen(
         viewModel.getAllMovies()
     }
 
-    val state by viewModel.moviesStateFlow.collectAsState(HomeViewModel.HomeUiState())
+    val state by viewModel.moviesStateFlow.collectAsState()
 
     MaterialTheme {
         Surface {

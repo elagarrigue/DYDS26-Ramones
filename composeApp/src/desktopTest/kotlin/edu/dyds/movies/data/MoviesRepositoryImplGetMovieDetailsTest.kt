@@ -1,46 +1,14 @@
 package edu.dyds.movies.data
 
 import edu.dyds.movies.data.external.RemoteMovie
-import edu.dyds.movies.data.external.RemoteMoviesDataSource
-import edu.dyds.movies.data.local.LocalMoviesDataSource
-import edu.dyds.movies.domain.entity.Movie
+import edu.dyds.movies.data.fakes.FakeLocalMoviesDataSource
+import edu.dyds.movies.data.fakes.FakeRemoteMoviesDataSource
 import kotlinx.coroutines.test.runTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNull
 
 class MoviesRepositoryImplGetMovieDetailsTest {
-
-    // ─── Fakes ───────────────────────────────────────────────────────────────
-    private class FakeRemoteMoviesDataSource(
-        private val popularMovies: List<RemoteMovie> = emptyList(),
-        private val movieDetail: RemoteMovie? = null
-    ) : RemoteMoviesDataSource {
-        var receivedId: Int? = null
-        override suspend fun getPopularMovies(): List<RemoteMovie> = popularMovies
-        override suspend fun getMovieDetails(id: Int): RemoteMovie? {
-            receivedId = id
-            return movieDetail
-        }
-    }
-
-    private class FakeLocalMoviesDataSource(
-        initialMovies: List<Movie>? = null
-    ) : LocalMoviesDataSource {
-        private var cached: MutableList<Movie>? = initialMovies?.toMutableList()
-        val savedMovies: List<Movie>? get() = cached?.toList()
-        var getCachedMoviesCalls = 0
-        var saveMoviesCalls = 0
-
-        override fun getCachedMovies(): List<Movie>? {
-            getCachedMoviesCalls++
-            return cached?.ifEmpty { null }
-        }
-        override fun saveMovies(movies: List<Movie>) {
-            saveMoviesCalls++
-            cached = movies.toMutableList()
-        }
-    }
 
     // ─── Helpers ──────────────────────────────────────────────────────────────
     private fun makeRemoteMovie(

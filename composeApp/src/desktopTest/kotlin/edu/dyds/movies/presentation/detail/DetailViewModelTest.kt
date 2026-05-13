@@ -4,11 +4,8 @@ import edu.dyds.movies.domain.entity.Movie
 import edu.dyds.movies.domain.usecase.GetMovieDetailUseCase
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
-import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
@@ -23,7 +20,7 @@ import kotlin.test.assertTrue
 @OptIn(ExperimentalCoroutinesApi::class)
 class DetailViewModelTest {
 
-    private val testDispatcher = StandardTestDispatcher()
+    private val testDispatcher = UnconfinedTestDispatcher()
 
     private val movie = Movie(
         id = 1,
@@ -59,7 +56,7 @@ class DetailViewModelTest {
     fun `estado inicial tiene isLoading en false y movie en null`() = runTest(testDispatcher) {
         val viewModel = DetailViewModel(fakeUseCase(movie))
 
-        val state = viewModel.movieDetailStateFlow.first()
+        val state = viewModel.movieDetailStateFlow.value
 
         assertFalse(state.isLoading)
         assertNull(state.movie)
@@ -70,11 +67,10 @@ class DetailViewModelTest {
         val viewModel = DetailViewModel(fakeUseCase(movie))
         val states = mutableListOf<DetailViewModel.DetailUiState>()
 
-        val collectJob = launch(UnconfinedTestDispatcher(testScheduler)) {
+        val collectJob = launch {
             viewModel.movieDetailStateFlow.collect { states.add(it) }
         }
         viewModel.getMovieDetail(movie.id)
-        advanceUntilIdle()
         collectJob.cancel()
 
         assertTrue(states.any { it.isLoading })
@@ -85,9 +81,8 @@ class DetailViewModelTest {
         val viewModel = DetailViewModel(fakeUseCase(movie))
 
         viewModel.getMovieDetail(movie.id)
-        advanceUntilIdle()
 
-        assertFalse(viewModel.movieDetailStateFlow.first().isLoading)
+        assertFalse(viewModel.movieDetailStateFlow.value.isLoading)
     }
 
     @Test
@@ -95,9 +90,8 @@ class DetailViewModelTest {
         val viewModel = DetailViewModel(fakeUseCase(movie))
 
         viewModel.getMovieDetail(movie.id)
-        advanceUntilIdle()
 
-        val state = viewModel.movieDetailStateFlow.first()
+        val state = viewModel.movieDetailStateFlow.value
         assertEquals(movie, state.movie)
         assertFalse(state.isLoading)
     }
@@ -107,9 +101,8 @@ class DetailViewModelTest {
         val viewModel = DetailViewModel(fakeUseCase(null))
 
         viewModel.getMovieDetail(999)
-        advanceUntilIdle()
 
-        val state = viewModel.movieDetailStateFlow.first()
+        val state = viewModel.movieDetailStateFlow.value
         assertNull(state.movie)
         assertFalse(state.isLoading)
     }
@@ -126,7 +119,6 @@ class DetailViewModelTest {
         val viewModel = DetailViewModel(useCase)
 
         viewModel.getMovieDetail(42)
-        advanceUntilIdle()
 
         assertEquals(42, capturedId)
     }
@@ -141,12 +133,10 @@ class DetailViewModelTest {
         val viewModel = DetailViewModel(useCase)
 
         viewModel.getMovieDetail(movie.id)
-        advanceUntilIdle()
-        assertEquals(movie, viewModel.movieDetailStateFlow.first().movie)
+        assertEquals(movie, viewModel.movieDetailStateFlow.value.movie)
 
         viewModel.getMovieDetail(2)
-        advanceUntilIdle()
-        assertEquals(secondMovie, viewModel.movieDetailStateFlow.first().movie)
+        assertEquals(secondMovie, viewModel.movieDetailStateFlow.value.movie)
     }
 
     @Test
@@ -159,11 +149,8 @@ class DetailViewModelTest {
         val viewModel = DetailViewModel(useCase)
 
         viewModel.getMovieDetail(movie.id)
-        advanceUntilIdle()
-
         viewModel.getMovieDetail(2)
-        advanceUntilIdle()
 
-        assertEquals(secondMovie, viewModel.movieDetailStateFlow.first().movie)
+        assertEquals(secondMovie, viewModel.movieDetailStateFlow.value.movie)
     }
 }

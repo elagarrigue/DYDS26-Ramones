@@ -5,11 +5,8 @@ import edu.dyds.movies.domain.entity.QualifiedMovie
 import edu.dyds.movies.domain.usecase.GetPopularMoviesUseCase
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
-import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
@@ -23,7 +20,7 @@ import kotlin.test.assertTrue
 @OptIn(ExperimentalCoroutinesApi::class)
 class HomeViewModelTest {
 
-    private val testDispatcher = StandardTestDispatcher()
+    private val testDispatcher = UnconfinedTestDispatcher()
 
     @BeforeTest
     fun setup() {
@@ -59,7 +56,7 @@ class HomeViewModelTest {
     fun `estado inicial tiene isLoading en false y movies vacia`() = runTest(testDispatcher) {
         val viewModel = HomeViewModel(fakeUseCase(emptyList()))
 
-        val state = viewModel.moviesStateFlow.first()
+        val state = viewModel.moviesStateFlow.value
 
         assertFalse(state.isLoading)
         assertTrue(state.movies.isEmpty())
@@ -71,11 +68,10 @@ class HomeViewModelTest {
         val viewModel = HomeViewModel(fakeUseCase(movies))
         val states = mutableListOf<HomeViewModel.HomeUiState>()
 
-        val collectJob = launch(UnconfinedTestDispatcher(testScheduler)) {
+        val collectJob = launch {
             viewModel.moviesStateFlow.collect { states.add(it) }
         }
         viewModel.getAllMovies()
-        advanceUntilIdle()
         collectJob.cancel()
 
         assertTrue(states.any { it.isLoading })
@@ -86,9 +82,8 @@ class HomeViewModelTest {
         val viewModel = HomeViewModel(fakeUseCase(emptyList()))
 
         viewModel.getAllMovies()
-        advanceUntilIdle()
 
-        assertFalse(viewModel.moviesStateFlow.first().isLoading)
+        assertFalse(viewModel.moviesStateFlow.value.isLoading)
     }
 
     @Test
@@ -100,9 +95,8 @@ class HomeViewModelTest {
         val viewModel = HomeViewModel(fakeUseCase(qualifiedMovies))
 
         viewModel.getAllMovies()
-        advanceUntilIdle()
 
-        val state = viewModel.moviesStateFlow.first()
+        val state = viewModel.moviesStateFlow.value
         assertEquals(qualifiedMovies, state.movies)
         assertFalse(state.isLoading)
     }
@@ -112,9 +106,8 @@ class HomeViewModelTest {
         val viewModel = HomeViewModel(fakeUseCase(emptyList()))
 
         viewModel.getAllMovies()
-        advanceUntilIdle()
 
-        val state = viewModel.moviesStateFlow.first()
+        val state = viewModel.moviesStateFlow.value
         assertTrue(state.movies.isEmpty())
         assertFalse(state.isLoading)
     }
@@ -129,9 +122,8 @@ class HomeViewModelTest {
         val viewModel = HomeViewModel(fakeUseCase(qualifiedMovies))
 
         viewModel.getAllMovies()
-        advanceUntilIdle()
 
-        assertEquals(qualifiedMovies, viewModel.moviesStateFlow.first().movies)
+        assertEquals(qualifiedMovies, viewModel.moviesStateFlow.value.movies)
     }
 
     @Test
@@ -140,9 +132,8 @@ class HomeViewModelTest {
         val viewModel = HomeViewModel(fakeUseCase(qualifiedMovies))
 
         viewModel.getAllMovies()
-        advanceUntilIdle()
 
-        assertEquals(5, viewModel.moviesStateFlow.first().movies.size)
+        assertEquals(5, viewModel.moviesStateFlow.value.movies.size)
     }
 
     @Test
@@ -162,12 +153,10 @@ class HomeViewModelTest {
         val viewModel = HomeViewModel(useCase)
 
         viewModel.getAllMovies()
-        advanceUntilIdle()
-        assertEquals(firstBatch, viewModel.moviesStateFlow.first().movies)
+        assertEquals(firstBatch, viewModel.moviesStateFlow.value.movies)
 
         viewModel.getAllMovies()
-        advanceUntilIdle()
-        assertEquals(secondBatch, viewModel.moviesStateFlow.first().movies)
+        assertEquals(secondBatch, viewModel.moviesStateFlow.value.movies)
     }
 
     @Test
@@ -184,11 +173,8 @@ class HomeViewModelTest {
         val viewModel = HomeViewModel(useCase)
 
         viewModel.getAllMovies()
-        advanceUntilIdle()
-
         viewModel.getAllMovies()
-        advanceUntilIdle()
 
-        assertEquals(secondBatch, viewModel.moviesStateFlow.first().movies)
+        assertEquals(secondBatch, viewModel.moviesStateFlow.value.movies)
     }
 }

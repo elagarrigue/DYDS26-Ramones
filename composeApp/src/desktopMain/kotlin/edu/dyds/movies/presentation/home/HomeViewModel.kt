@@ -4,8 +4,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import edu.dyds.movies.domain.entity.QualifiedMovie
 import edu.dyds.movies.domain.usecase.GetPopularMoviesUseCase
-import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
 class HomeViewModel(
@@ -14,7 +14,7 @@ class HomeViewModel(
 
     private val moviesStateMutableStateFlow = MutableStateFlow(HomeUiState())
 
-    val moviesStateFlow: Flow<HomeUiState> = moviesStateMutableStateFlow
+    val moviesStateFlow: StateFlow<HomeUiState> = moviesStateMutableStateFlow
 
     fun getAllMovies() {
         viewModelScope.launch {
