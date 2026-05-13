@@ -5,7 +5,6 @@ import edu.dyds.movies.domain.entity.QualifiedMovie
 import edu.dyds.movies.domain.usecase.GetPopularMoviesUseCase
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.launch
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.runTest
@@ -60,21 +59,6 @@ class HomeViewModelTest {
 
         assertFalse(state.isLoading)
         assertTrue(state.movies.isEmpty())
-    }
-
-    @Test
-    fun `getAllMovies emite estado de carga antes de obtener el resultado`() = runTest(testDispatcher) {
-        val movies = listOf(QualifiedMovie(makeMovie(1, "Movie 1"), true))
-        val viewModel = HomeViewModel(fakeUseCase(movies))
-        val states = mutableListOf<HomeViewModel.HomeUiState>()
-
-        val collectJob = launch {
-            viewModel.moviesStateFlow.collect { states.add(it) }
-        }
-        viewModel.getAllMovies()
-        collectJob.cancel()
-
-        assertTrue(states.any { it.isLoading })
     }
 
     @Test

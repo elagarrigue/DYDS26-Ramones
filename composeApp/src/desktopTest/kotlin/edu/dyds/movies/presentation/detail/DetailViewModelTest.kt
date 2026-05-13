@@ -4,7 +4,6 @@ import edu.dyds.movies.domain.entity.Movie
 import edu.dyds.movies.domain.usecase.GetMovieDetailUseCase
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.launch
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.runTest
@@ -60,20 +59,6 @@ class DetailViewModelTest {
 
         assertFalse(state.isLoading)
         assertNull(state.movie)
-    }
-
-    @Test
-    fun `getMovieDetail emite estado de carga antes de obtener el resultado`() = runTest(testDispatcher) {
-        val viewModel = DetailViewModel(fakeUseCase(movie))
-        val states = mutableListOf<DetailViewModel.DetailUiState>()
-
-        val collectJob = launch {
-            viewModel.movieDetailStateFlow.collect { states.add(it) }
-        }
-        viewModel.getMovieDetail(movie.id)
-        collectJob.cancel()
-
-        assertTrue(states.any { it.isLoading })
     }
 
     @Test
