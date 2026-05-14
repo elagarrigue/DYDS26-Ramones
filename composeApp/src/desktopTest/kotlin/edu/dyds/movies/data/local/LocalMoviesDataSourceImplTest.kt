@@ -1,11 +1,19 @@
 package edu.dyds.movies.data.local
 
 import edu.dyds.movies.domain.entity.Movie
+import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNull
 
 class LocalMoviesDataSourceImplTest {
+
+    private lateinit var dataSource: LocalMoviesDataSourceImpl
+
+    @BeforeTest
+    fun setUp() {
+        dataSource = LocalMoviesDataSourceImpl()
+    }
 
     private fun makeMovie(id: Int) = Movie(
         id = id,
@@ -22,8 +30,6 @@ class LocalMoviesDataSourceImplTest {
 
     @Test
     fun `getCachedMovies retorna null cuando el cache esta vacio`() {
-        val dataSource = LocalMoviesDataSourceImpl()
-
         val result = dataSource.getCachedMovies()
 
         assertNull(result)
@@ -31,7 +37,6 @@ class LocalMoviesDataSourceImplTest {
 
     @Test
     fun `getCachedMovies retorna las peliculas guardadas`() {
-        val dataSource = LocalMoviesDataSourceImpl()
         val movies = listOf(makeMovie(1), makeMovie(2))
         dataSource.saveMovies(movies)
 
@@ -42,7 +47,6 @@ class LocalMoviesDataSourceImplTest {
 
     @Test
     fun `saveMovies guarda correctamente las peliculas`() {
-        val dataSource = LocalMoviesDataSourceImpl()
         val movies = listOf(makeMovie(1), makeMovie(2), makeMovie(3))
 
         dataSource.saveMovies(movies)
@@ -53,7 +57,6 @@ class LocalMoviesDataSourceImplTest {
 
     @Test
     fun `saveMovies reemplaza el contenido anterior`() {
-        val dataSource = LocalMoviesDataSourceImpl()
         dataSource.saveMovies(listOf(makeMovie(1), makeMovie(2)))
 
         dataSource.saveMovies(listOf(makeMovie(99)))
