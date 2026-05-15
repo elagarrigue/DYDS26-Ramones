@@ -48,15 +48,12 @@ class GetPopularMoviesUseCaseImplTest {
         voteAverage = 6.0
     )
 
-    // --- FakeMoviesRepository ---
-
     private fun fakeRepository(movies: List<Movie>): MoviesRepository =
         object : MoviesRepository {
             override suspend fun getPopularMovies(): List<Movie> = movies
             override suspend fun getMovieDetails(id: Int): Movie? = null
         }
 
-    // --- Tests ---
 
     @Test
     fun `las peliculas con voteAverage mayor a 6 se marcan como buenas`() = runTest {

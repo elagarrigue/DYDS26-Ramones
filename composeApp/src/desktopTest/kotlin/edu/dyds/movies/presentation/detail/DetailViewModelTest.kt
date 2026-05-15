@@ -49,10 +49,8 @@ class DetailViewModelTest {
             override suspend fun invoke(id: Int): Movie? = result
         }
 
-    // --- Tests ---
-
     @Test
-    fun `estado inicial tiene isLoading en false y movie en null`() = runTest(testDispatcher) {
+    fun `estado inicial tiene isLoading en false y movie en null`() = runTest {
         val viewModel = DetailViewModel(fakeUseCase(movie))
 
         val state = viewModel.movieDetailStateFlow.value
@@ -62,7 +60,7 @@ class DetailViewModelTest {
     }
 
     @Test
-    fun `getMovieDetail termina con isLoading en false tras obtener la pelicula`() = runTest(testDispatcher) {
+    fun `getMovieDetail termina con isLoading en false tras obtener la pelicula`() = runTest {
         val viewModel = DetailViewModel(fakeUseCase(movie))
 
         viewModel.getMovieDetail(movie.id)
@@ -71,7 +69,7 @@ class DetailViewModelTest {
     }
 
     @Test
-    fun `getMovieDetail actualiza el estado con la pelicula cuando el caso de uso la retorna`() = runTest(testDispatcher) {
+    fun `getMovieDetail actualiza el estado con la pelicula cuando el caso de uso la retorna`() = runTest {
         val viewModel = DetailViewModel(fakeUseCase(movie))
 
         viewModel.getMovieDetail(movie.id)
@@ -82,7 +80,7 @@ class DetailViewModelTest {
     }
 
     @Test
-    fun `getMovieDetail deja movie en null cuando el caso de uso no encuentra la pelicula`() = runTest(testDispatcher) {
+    fun `getMovieDetail deja movie en null cuando el caso de uso no encuentra la pelicula`() = runTest {
         val viewModel = DetailViewModel(fakeUseCase(null))
 
         viewModel.getMovieDetail(999)
@@ -93,7 +91,7 @@ class DetailViewModelTest {
     }
 
     @Test
-    fun `getMovieDetail pasa el id correcto al caso de uso`() = runTest(testDispatcher) {
+    fun `getMovieDetail pasa el id correcto al caso de uso`() = runTest {
         var capturedId: Int? = null
         val useCase = object : GetMovieDetailUseCase {
             override suspend fun invoke(id: Int): Movie? {
@@ -109,23 +107,7 @@ class DetailViewModelTest {
     }
 
     @Test
-    fun `getMovieDetail puede llamarse varias veces actualizando el estado correctamente`() = runTest(testDispatcher) {
-        val secondMovie = movie.copy(id = 2, title = "Second Movie")
-        val useCase = object : GetMovieDetailUseCase {
-            override suspend fun invoke(id: Int): Movie? =
-                if (id == movie.id) movie else secondMovie
-        }
-        val viewModel = DetailViewModel(useCase)
-
-        viewModel.getMovieDetail(movie.id)
-        assertEquals(movie, viewModel.movieDetailStateFlow.value.movie)
-
-        viewModel.getMovieDetail(2)
-        assertEquals(secondMovie, viewModel.movieDetailStateFlow.value.movie)
-    }
-
-    @Test
-    fun `getMovieDetail reemplaza la pelicula anterior al llamarse de nuevo`() = runTest(testDispatcher) {
+    fun `getMovieDetail reemplaza la pelicula anterior al llamarse de nuevo`() = runTest {
         val secondMovie = movie.copy(id = 2, title = "New Movie")
         val useCase = object : GetMovieDetailUseCase {
             override suspend fun invoke(id: Int): Movie? =

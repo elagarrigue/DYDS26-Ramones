@@ -9,8 +9,6 @@ import kotlin.test.Test
 import kotlin.test.assertEquals
 
 class MoviesRepositoryImplGetPopularMoviesTest {
-
-    // ─── Helpers ──────────────────────────────────────────────────────────────
     private fun makeRemoteMovie(
         id: Int = 1,
         title: String = "Movie $id"
@@ -43,19 +41,15 @@ class MoviesRepositoryImplGetPopularMoviesTest {
         voteAverage = 7.5
     )
 
-    // ─── Tests para getPopularMovies ──────────────────────────────────────────
     @Test
     fun `cuando el cache esta vacio, obtiene de remoto y retorna peliculas`() = runTest {
-        // Arrange
         val remoteMovies = listOf(makeRemoteMovie(1), makeRemoteMovie(2))
         val remote = FakeRemoteMoviesDataSource(popularMovies = remoteMovies)
         val cache = FakeLocalMoviesDataSource(initialMovies = null)
         val repository = MoviesRepositoryImpl(remote, cache)
 
-        // Act
         val result = repository.getPopularMovies()
 
-        // Assert
         assertEquals(2, result.size)
         assertEquals(1, result[0].id)
         assertEquals(2, result[1].id)
@@ -63,32 +57,26 @@ class MoviesRepositoryImplGetPopularMoviesTest {
 
     @Test
     fun `cuando el cache esta vacio, guarda las peliculas obtenidas en el cache`() = runTest {
-        // Arrange
         val remoteMovies = listOf(makeRemoteMovie(1), makeRemoteMovie(2))
         val remote = FakeRemoteMoviesDataSource(popularMovies = remoteMovies)
         val cache = FakeLocalMoviesDataSource(initialMovies = null)
         val repository = MoviesRepositoryImpl(remote, cache)
 
-        // Act
         repository.getPopularMovies()
 
-        // Assert
         assertEquals(2, cache.savedMovies?.size)
         assertEquals(1, cache.savedMovies?.get(0)?.id)
     }
 
     @Test
     fun `cuando el cache tiene peliculas, retorna las del cache sin consultar remoto`() = runTest {
-        // Arrange
         val cachedMovies = listOf(makeMovie(10), makeMovie(20))
         val remote = FakeRemoteMoviesDataSource(popularMovies = listOf(makeRemoteMovie(99)))
         val cache = FakeLocalMoviesDataSource(initialMovies = cachedMovies)
         val repository = MoviesRepositoryImpl(remote, cache)
 
-        // Act
         val result = repository.getPopularMovies()
 
-        // Assert
         assertEquals(2, result.size)
         assertEquals(10, result[0].id)
         assertEquals(20, result[1].id)
@@ -97,18 +85,15 @@ class MoviesRepositoryImplGetPopularMoviesTest {
 
     @Test
     fun `mapea correctamente los campos de RemoteMovie a Movie en getPopularMovies`() = runTest {
-        // Arrange
         val remote = FakeRemoteMoviesDataSource(
             popularMovies = listOf(makeRemoteMovie(id = 42, title = "Inception"))
         )
         val cache = FakeLocalMoviesDataSource()
         val repository = MoviesRepositoryImpl(remote, cache)
 
-        // Act
         val result = repository.getPopularMovies()
         val movie = result.first()
 
-        // Assert
         assertEquals(42, movie.id)
         assertEquals("Inception", movie.title)
         assertEquals("https://image.tmdb.org/t/p/w185/poster42.jpg", movie.poster)
@@ -123,15 +108,12 @@ class MoviesRepositoryImplGetPopularMoviesTest {
 
     @Test
     fun `cuando remoto retorna lista vacia, retorna vacio y guarda vacio en cache`() = runTest {
-        // Arrange
         val remote = FakeRemoteMoviesDataSource(popularMovies = emptyList())
         val cache = FakeLocalMoviesDataSource()
         val repository = MoviesRepositoryImpl(remote, cache)
 
-        // Act
         val result = repository.getPopularMovies()
 
-        // Assert
         assertEquals(0, result.size)
         assertEquals(0, cache.savedMovies?.size)
     }

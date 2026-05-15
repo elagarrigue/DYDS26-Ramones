@@ -10,7 +10,6 @@ import kotlin.test.assertNull
 
 class MoviesRepositoryImplGetMovieDetailsTest {
 
-    // ─── Helpers ──────────────────────────────────────────────────────────────
     private fun makeRemoteMovie(
         id: Int = 1,
         title: String = "Movie $id"
@@ -27,19 +26,15 @@ class MoviesRepositoryImplGetMovieDetailsTest {
         voteAverage = 7.5
     )
 
-    // ─── Tests para getMovieDetails ───────────────────────────────────────────
     @Test
     fun `cuando remoto retorna una pelicula, mapea y retorna la pelicula`() = runTest {
-        // Arrange
         val remoteMovie = makeRemoteMovie(id = 5, title = "The Matrix")
         val remote = FakeRemoteMoviesDataSource(movieDetail = remoteMovie)
         val cache = FakeLocalMoviesDataSource()
         val repository = MoviesRepositoryImpl(remote, cache)
 
-        // Act
         val result = repository.getMovieDetails(5)
 
-        // Assert
         assertEquals(5, result?.id)
         assertEquals("The Matrix", result?.title)
         assertEquals(5, remote.receivedId)
@@ -47,30 +42,24 @@ class MoviesRepositoryImplGetMovieDetailsTest {
 
     @Test
     fun `cuando remoto retorna null, retorna null`() = runTest {
-        // Arrange
         val remote = FakeRemoteMoviesDataSource(movieDetail = null)
         val cache = FakeLocalMoviesDataSource()
         val repository = MoviesRepositoryImpl(remote, cache)
 
-        // Act
         val result = repository.getMovieDetails(999)
 
-        // Assert
         assertNull(result)
     }
 
     @Test
     fun `mapea correctamente todos los campos de RemoteMovie a Movie en getMovieDetails`() = runTest {
-        // Arrange
         val remoteMovie = makeRemoteMovie(id = 7, title = "Interstellar")
         val remote = FakeRemoteMoviesDataSource(movieDetail = remoteMovie)
         val cache = FakeLocalMoviesDataSource()
         val repository = MoviesRepositoryImpl(remote, cache)
 
-        // Act
         val result = repository.getMovieDetails(7)!!
 
-        // Assert
         assertEquals(7, result.id)
         assertEquals("Interstellar", result.title)
         assertEquals("Overview 7", result.overview)
@@ -85,16 +74,13 @@ class MoviesRepositoryImplGetMovieDetailsTest {
 
     @Test
     fun `no interactua con el cache local en getMovieDetails`() = runTest {
-        // Arrange
         val remoteMovie = makeRemoteMovie(id = 3)
         val remote = FakeRemoteMoviesDataSource(movieDetail = remoteMovie)
         val cache = FakeLocalMoviesDataSource()
         val repository = MoviesRepositoryImpl(remote, cache)
 
-        // Act
         repository.getMovieDetails(3)
 
-        // Assert
         assertNull(cache.savedMovies)
         assertEquals(0, cache.getCachedMoviesCalls)
         assertEquals(0, cache.saveMoviesCalls)

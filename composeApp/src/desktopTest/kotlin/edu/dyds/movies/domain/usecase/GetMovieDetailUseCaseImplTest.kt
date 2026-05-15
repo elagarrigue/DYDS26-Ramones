@@ -22,15 +22,11 @@ class GetMovieDetailUseCaseImplTest {
         voteAverage = 7.5
     )
 
-    // --- FakeMoviesRepository ---
-
     private fun fakeRepository(movieDetail: Movie?): MoviesRepository =
         object : MoviesRepository {
             override suspend fun getPopularMovies(): List<Movie> = emptyList()
             override suspend fun getMovieDetails(id: Int): Movie? = movieDetail
         }
-
-    // --- Tests ---
 
     @Test
     fun `retorna la pelicula cuando el repositorio la encuentra`() = runTest {

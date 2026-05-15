@@ -49,10 +49,8 @@ class HomeViewModelTest {
             override suspend fun invoke(): List<QualifiedMovie> = result
         }
 
-    // --- Tests ---
-
     @Test
-    fun `estado inicial tiene isLoading en false y movies vacia`() = runTest(testDispatcher) {
+    fun `estado inicial tiene isLoading en false y movies vacia`() = runTest {
         val viewModel = HomeViewModel(fakeUseCase(emptyList()))
 
         val state = viewModel.moviesStateFlow.value
@@ -62,7 +60,7 @@ class HomeViewModelTest {
     }
 
     @Test
-    fun `getAllMovies termina con isLoading en false tras obtener las peliculas`() = runTest(testDispatcher) {
+    fun `getAllMovies termina con isLoading en false tras obtener las peliculas`() = runTest {
         val viewModel = HomeViewModel(fakeUseCase(emptyList()))
 
         viewModel.getAllMovies()
@@ -71,7 +69,7 @@ class HomeViewModelTest {
     }
 
     @Test
-    fun `getAllMovies actualiza el estado con la lista de peliculas retornada por el caso de uso`() = runTest(testDispatcher) {
+    fun `getAllMovies actualiza el estado con la lista de peliculas retornada por el caso de uso`() = runTest {
         val qualifiedMovies = listOf(
             QualifiedMovie(makeMovie(1, "Movie 1"), true),
             QualifiedMovie(makeMovie(2, "Movie 2"), false)
@@ -86,7 +84,7 @@ class HomeViewModelTest {
     }
 
     @Test
-    fun `getAllMovies actualiza el estado con lista vacia cuando el caso de uso no retorna peliculas`() = runTest(testDispatcher) {
+    fun `getAllMovies actualiza el estado con lista vacia cuando el caso de uso no retorna peliculas`() = runTest {
         val viewModel = HomeViewModel(fakeUseCase(emptyList()))
 
         viewModel.getAllMovies()
@@ -97,7 +95,7 @@ class HomeViewModelTest {
     }
 
     @Test
-    fun `getAllMovies preserva el orden de peliculas retornadas por el caso de uso`() = runTest(testDispatcher) {
+    fun `getAllMovies preserva el orden de peliculas retornadas por el caso de uso`() = runTest {
         val qualifiedMovies = listOf(
             QualifiedMovie(makeMovie(1, "Best Movie", 9.0), true),
             QualifiedMovie(makeMovie(2, "Good Movie", 7.0), true),
@@ -111,7 +109,7 @@ class HomeViewModelTest {
     }
 
     @Test
-    fun `getAllMovies retorna el numero correcto de peliculas`() = runTest(testDispatcher) {
+    fun `getAllMovies retorna el numero correcto de peliculas`() = runTest {
         val qualifiedMovies = (1..5).map { QualifiedMovie(makeMovie(it, "Movie $it"), true) }
         val viewModel = HomeViewModel(fakeUseCase(qualifiedMovies))
 
@@ -121,30 +119,7 @@ class HomeViewModelTest {
     }
 
     @Test
-    fun `getAllMovies puede llamarse varias veces actualizando el estado correctamente`() = runTest(testDispatcher) {
-        val firstBatch = listOf(QualifiedMovie(makeMovie(1, "Movie 1"), true))
-        val secondBatch = listOf(
-            QualifiedMovie(makeMovie(2, "Movie 2"), true),
-            QualifiedMovie(makeMovie(3, "Movie 3"), false)
-        )
-        var callCount = 0
-        val useCase = object : GetPopularMoviesUseCase {
-            override suspend fun invoke(): List<QualifiedMovie> {
-                callCount++
-                return if (callCount == 1) firstBatch else secondBatch
-            }
-        }
-        val viewModel = HomeViewModel(useCase)
-
-        viewModel.getAllMovies()
-        assertEquals(firstBatch, viewModel.moviesStateFlow.value.movies)
-
-        viewModel.getAllMovies()
-        assertEquals(secondBatch, viewModel.moviesStateFlow.value.movies)
-    }
-
-    @Test
-    fun `getAllMovies reemplaza la lista anterior al llamarse de nuevo`() = runTest(testDispatcher) {
+    fun `getAllMovies reemplaza la lista anterior al llamarse de nuevo`() = runTest {
         val firstBatch = listOf(QualifiedMovie(makeMovie(1, "Old Movie"), true))
         val secondBatch = listOf(QualifiedMovie(makeMovie(2, "New Movie"), false))
         var callCount = 0
