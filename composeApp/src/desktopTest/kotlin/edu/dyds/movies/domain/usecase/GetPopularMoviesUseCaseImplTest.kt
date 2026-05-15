@@ -1,7 +1,7 @@
 package edu.dyds.movies.domain.usecase
 
 import edu.dyds.movies.domain.entity.Movie
-import edu.dyds.movies.domain.repository.MoviesRepository
+import edu.dyds.movies.domain.fakes.FakeMoviesRepository
 import kotlinx.coroutines.test.runTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -48,16 +48,10 @@ class GetPopularMoviesUseCaseImplTest {
         voteAverage = 6.0
     )
 
-    private fun fakeRepository(movies: List<Movie>): MoviesRepository =
-        object : MoviesRepository {
-            override suspend fun getPopularMovies(): List<Movie> = movies
-            override suspend fun getMovieDetails(id: Int): Movie? = null
-        }
-
 
     @Test
     fun `las peliculas con voteAverage mayor a 6 se marcan como buenas`() = runTest {
-        val useCase = GetPopularMoviesUseCaseImpl(fakeRepository(listOf(goodMovie)))
+        val useCase = GetPopularMoviesUseCaseImpl(FakeMoviesRepository(popularMovies = listOf(goodMovie)))
 
         val result = useCase()
 
@@ -66,7 +60,7 @@ class GetPopularMoviesUseCaseImplTest {
 
     @Test
     fun `las peliculas con voteAverage menor a 6 se marcan como malas`() = runTest {
-        val useCase = GetPopularMoviesUseCaseImpl(fakeRepository(listOf(badMovie)))
+        val useCase = GetPopularMoviesUseCaseImpl(FakeMoviesRepository(listOf(badMovie)))
 
         val result = useCase()
 
@@ -75,7 +69,7 @@ class GetPopularMoviesUseCaseImplTest {
 
     @Test
     fun `las peliculas con voteAverage exactamente 6 se marcan como buenas`() = runTest {
-        val useCase = GetPopularMoviesUseCaseImpl(fakeRepository(listOf(borderlineMovie)))
+        val useCase = GetPopularMoviesUseCaseImpl(FakeMoviesRepository(popularMovies = listOf(borderlineMovie)))
 
         val result = useCase()
 
@@ -84,7 +78,7 @@ class GetPopularMoviesUseCaseImplTest {
 
     @Test
     fun `las peliculas se ordenan por voteAverage de mayor a menor`() = runTest {
-        val useCase = GetPopularMoviesUseCaseImpl(fakeRepository(listOf(badMovie, borderlineMovie, goodMovie)))
+        val useCase = GetPopularMoviesUseCaseImpl(FakeMoviesRepository(popularMovies = listOf(badMovie, borderlineMovie, goodMovie)))
 
         val result = useCase()
 
@@ -93,7 +87,7 @@ class GetPopularMoviesUseCaseImplTest {
 
     @Test
     fun `una lista vacia retorna un resultado vacio`() = runTest {
-        val useCase = GetPopularMoviesUseCaseImpl(fakeRepository(emptyList()))
+        val useCase = GetPopularMoviesUseCaseImpl(FakeMoviesRepository())
 
         val result = useCase()
 
@@ -102,7 +96,7 @@ class GetPopularMoviesUseCaseImplTest {
 
     @Test
     fun `el resultado contiene todas las peliculas del repositorio`() = runTest {
-        val useCase = GetPopularMoviesUseCaseImpl(fakeRepository(listOf(goodMovie, badMovie)))
+        val useCase = GetPopularMoviesUseCaseImpl(FakeMoviesRepository(popularMovies = listOf(goodMovie, badMovie)))
 
         val result = useCase()
 
