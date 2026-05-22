@@ -17,7 +17,7 @@ correlación en OMDB, por lo que el título es el identificador común entre amb
 
 ---
 
-## Etapa 1 — Reorganizar data/external y renombrar
+## [OK] Etapa 1 — Reorganizar data/external y renombrar
 
 **Objetivo:** Mover los archivos de TMDB a su propio subdirectorio y renombrar la implementación.
 
@@ -29,7 +29,7 @@ correlación en OMDB, por lo que el título es el identificador común entre amb
 
 ---
 
-## Etapa 2 — Separar la interfaz (Interface Segregation)
+## [OK] Etapa 2 — Separar la interfaz (Interface Segregation)
 
 **Objetivo:** `RemoteMoviesDataSource` mezcla responsabilidades de lista y detalle. OMDB solo
 se usará para detalle, no para listas. Separar en dos interfaces.

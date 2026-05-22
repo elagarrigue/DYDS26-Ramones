@@ -1,8 +1,9 @@
 package edu.dyds.movies.data
 
-import edu.dyds.movies.data.external.RemoteMovie
+import edu.dyds.movies.data.external.tmdb.RemoteMovie
 import edu.dyds.movies.data.fakes.FakeLocalMoviesDataSource
-import edu.dyds.movies.data.fakes.FakeRemoteMoviesDataSource
+import edu.dyds.movies.data.fakes.FakeMovieDetailExternalSource
+import edu.dyds.movies.data.fakes.FakeMoviesListExternalSource
 import kotlinx.coroutines.test.runTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -29,22 +30,27 @@ class MoviesRepositoryImplGetMovieDetailsTest {
     @Test
     fun `cuando remoto retorna una pelicula, mapea y retorna la pelicula`() = runTest {
         val remoteMovie = makeRemoteMovie(id = 5, title = "The Matrix")
-        val remote = FakeRemoteMoviesDataSource(movieDetail = remoteMovie)
-        val cache = FakeLocalMoviesDataSource()
-        val repository = MoviesRepositoryImpl(remote, cache)
+        val detailSource = FakeMovieDetailExternalSource(movieDetail = remoteMovie)
+        val repository = MoviesRepositoryImpl(
+            moviesListExternalSource = FakeMoviesListExternalSource(),
+            movieDetailExternalSource = detailSource,
+            localMoviesDataSource = FakeLocalMoviesDataSource()
+        )
 
         val result = repository.getMovieDetails(5)
 
         assertEquals(5, result?.id)
         assertEquals("The Matrix", result?.title)
-        assertEquals(5, remote.receivedId)
+        assertEquals(5, detailSource.receivedId)
     }
 
     @Test
     fun `cuando remoto retorna null, retorna null`() = runTest {
-        val remote = FakeRemoteMoviesDataSource(movieDetail = null)
-        val cache = FakeLocalMoviesDataSource()
-        val repository = MoviesRepositoryImpl(remote, cache)
+        val repository = MoviesRepositoryImpl(
+            moviesListExternalSource = FakeMoviesListExternalSource(),
+            movieDetailExternalSource = FakeMovieDetailExternalSource(movieDetail = null),
+            localMoviesDataSource = FakeLocalMoviesDataSource()
+        )
 
         val result = repository.getMovieDetails(999)
 
@@ -54,9 +60,11 @@ class MoviesRepositoryImplGetMovieDetailsTest {
     @Test
     fun `mapea correctamente todos los campos de RemoteMovie a Movie en getMovieDetails`() = runTest {
         val remoteMovie = makeRemoteMovie(id = 7, title = "Interstellar")
-        val remote = FakeRemoteMoviesDataSource(movieDetail = remoteMovie)
-        val cache = FakeLocalMoviesDataSource()
-        val repository = MoviesRepositoryImpl(remote, cache)
+        val repository = MoviesRepositoryImpl(
+            moviesListExternalSource = FakeMoviesListExternalSource(),
+            movieDetailExternalSource = FakeMovieDetailExternalSource(movieDetail = remoteMovie),
+            localMoviesDataSource = FakeLocalMoviesDataSource()
+        )
 
         val result = repository.getMovieDetails(7)!!
 
@@ -74,10 +82,12 @@ class MoviesRepositoryImplGetMovieDetailsTest {
 
     @Test
     fun `no interactua con el cache local en getMovieDetails`() = runTest {
-        val remoteMovie = makeRemoteMovie(id = 3)
-        val remote = FakeRemoteMoviesDataSource(movieDetail = remoteMovie)
         val cache = FakeLocalMoviesDataSource()
-        val repository = MoviesRepositoryImpl(remote, cache)
+        val repository = MoviesRepositoryImpl(
+            moviesListExternalSource = FakeMoviesListExternalSource(),
+            movieDetailExternalSource = FakeMovieDetailExternalSource(movieDetail = makeRemoteMovie(3)),
+            localMoviesDataSource = cache
+        )
 
         repository.getMovieDetails(3)
 

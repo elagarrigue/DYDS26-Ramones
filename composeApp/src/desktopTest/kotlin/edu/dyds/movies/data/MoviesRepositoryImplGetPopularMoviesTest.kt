@@ -1,8 +1,9 @@
 package edu.dyds.movies.data
 
-import edu.dyds.movies.data.external.RemoteMovie
+import edu.dyds.movies.data.external.tmdb.RemoteMovie
 import edu.dyds.movies.data.fakes.FakeLocalMoviesDataSource
-import edu.dyds.movies.data.fakes.FakeRemoteMoviesDataSource
+import edu.dyds.movies.data.fakes.FakeMoviesListExternalSource
+import edu.dyds.movies.data.fakes.FakeMovieDetailExternalSource
 import edu.dyds.movies.domain.entity.Movie
 import kotlinx.coroutines.test.runTest
 import kotlin.test.Test
@@ -41,12 +42,18 @@ class MoviesRepositoryImplGetPopularMoviesTest {
         voteAverage = 7.5
     )
 
+    private fun makeRepository(
+        remoteMovies: List<RemoteMovie> = emptyList(),
+        initialCache: List<Movie>? = null
+    ) = MoviesRepositoryImpl(
+        moviesListExternalSource = FakeMoviesListExternalSource(popularMovies = remoteMovies),
+        movieDetailExternalSource = FakeMovieDetailExternalSource(),
+        localMoviesDataSource = FakeLocalMoviesDataSource(initialMovies = initialCache)
+    )
+
     @Test
     fun `cuando el cache esta vacio, obtiene de remoto y retorna peliculas`() = runTest {
-        val remoteMovies = listOf(makeRemoteMovie(1), makeRemoteMovie(2))
-        val remote = FakeRemoteMoviesDataSource(popularMovies = remoteMovies)
-        val cache = FakeLocalMoviesDataSource(initialMovies = null)
-        val repository = MoviesRepositoryImpl(remote, cache)
+        val repository = makeRepository(remoteMovies = listOf(makeRemoteMovie(1), makeRemoteMovie(2)))
 
         val result = repository.getPopularMovies()
 
@@ -57,10 +64,12 @@ class MoviesRepositoryImplGetPopularMoviesTest {
 
     @Test
     fun `cuando el cache esta vacio, guarda las peliculas obtenidas en el cache`() = runTest {
-        val remoteMovies = listOf(makeRemoteMovie(1), makeRemoteMovie(2))
-        val remote = FakeRemoteMoviesDataSource(popularMovies = remoteMovies)
         val cache = FakeLocalMoviesDataSource(initialMovies = null)
-        val repository = MoviesRepositoryImpl(remote, cache)
+        val repository = MoviesRepositoryImpl(
+            moviesListExternalSource = FakeMoviesListExternalSource(popularMovies = listOf(makeRemoteMovie(1), makeRemoteMovie(2))),
+            movieDetailExternalSource = FakeMovieDetailExternalSource(),
+            localMoviesDataSource = cache
+        )
 
         repository.getPopularMovies()
 
@@ -70,29 +79,26 @@ class MoviesRepositoryImplGetPopularMoviesTest {
 
     @Test
     fun `cuando el cache tiene peliculas, retorna las del cache sin consultar remoto`() = runTest {
-        val cachedMovies = listOf(makeMovie(10), makeMovie(20))
-        val remote = FakeRemoteMoviesDataSource(popularMovies = listOf(makeRemoteMovie(99)))
-        val cache = FakeLocalMoviesDataSource(initialMovies = cachedMovies)
-        val repository = MoviesRepositoryImpl(remote, cache)
+        val listSource = FakeMoviesListExternalSource(popularMovies = listOf(makeRemoteMovie(99)))
+        val repository = MoviesRepositoryImpl(
+            moviesListExternalSource = listSource,
+            movieDetailExternalSource = FakeMovieDetailExternalSource(),
+            localMoviesDataSource = FakeLocalMoviesDataSource(initialMovies = listOf(makeMovie(10), makeMovie(20)))
+        )
 
         val result = repository.getPopularMovies()
 
         assertEquals(2, result.size)
         assertEquals(10, result[0].id)
         assertEquals(20, result[1].id)
-        assertEquals(0, remote.getPopularMoviesCalls)
+        assertEquals(0, listSource.getPopularMoviesCalls)
     }
 
     @Test
     fun `mapea correctamente los campos de RemoteMovie a Movie en getPopularMovies`() = runTest {
-        val remote = FakeRemoteMoviesDataSource(
-            popularMovies = listOf(makeRemoteMovie(id = 42, title = "Inception"))
-        )
-        val cache = FakeLocalMoviesDataSource()
-        val repository = MoviesRepositoryImpl(remote, cache)
+        val repository = makeRepository(remoteMovies = listOf(makeRemoteMovie(id = 42, title = "Inception")))
 
-        val result = repository.getPopularMovies()
-        val movie = result.first()
+        val movie = repository.getPopularMovies().first()
 
         assertEquals(42, movie.id)
         assertEquals("Inception", movie.title)
@@ -108,9 +114,12 @@ class MoviesRepositoryImplGetPopularMoviesTest {
 
     @Test
     fun `cuando remoto retorna lista vacia, retorna vacio y guarda vacio en cache`() = runTest {
-        val remote = FakeRemoteMoviesDataSource(popularMovies = emptyList())
         val cache = FakeLocalMoviesDataSource()
-        val repository = MoviesRepositoryImpl(remote, cache)
+        val repository = MoviesRepositoryImpl(
+            moviesListExternalSource = FakeMoviesListExternalSource(popularMovies = emptyList()),
+            movieDetailExternalSource = FakeMovieDetailExternalSource(),
+            localMoviesDataSource = cache
+        )
 
         val result = repository.getPopularMovies()
 
