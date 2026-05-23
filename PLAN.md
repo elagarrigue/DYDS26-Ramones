@@ -45,7 +45,7 @@ se usará para detalle, no para listas. Separar en dos interfaces.
 
 ---
 
-## Etapa 3 — Reemplazar getMovieDetails(id) por búsqueda por título en TMDB
+## [OK] Etapa 3 — Reemplazar getMovieDetails(id) por búsqueda por título en TMDB
 
 **Objetivo:** Cambiar el mecanismo de obtención de detalle de película de id a título.
 
@@ -59,7 +59,7 @@ se usará para detalle, no para listas. Separar en dos interfaces.
 
 ---
 
-## Etapa 4 — Agregar servicio OMDB
+## [OK] Etapa 4 — Agregar servicio OMDB
 
 **Objetivo:** Incorporar OMDB como fuente de datos para el detalle de películas.
 

@@ -20,7 +20,7 @@ class MoviesRepositoryImpl(
         }
     }
 
-    override suspend fun getMovieDetails(id: Int): Movie? {
-        return movieDetailExternalSource.getMovieDetails(id)?.toDomainMovie()
+    override suspend fun getMovieDetail(title: String): Movie? {
+        return movieDetailExternalSource.getMovieDetail(title)
     }
 }

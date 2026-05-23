@@ -1,15 +1,15 @@
 package edu.dyds.movies.data.fakes
 
 import edu.dyds.movies.data.external.MovieDetailExternalSource
-import edu.dyds.movies.data.external.tmdb.RemoteMovie
+import edu.dyds.movies.domain.entity.Movie
 
 class FakeMovieDetailExternalSource(
-    private val movieDetail: RemoteMovie? = null
+    private val movieDetail: Movie? = null
 ) : MovieDetailExternalSource {
-    var receivedId: Int? = null
+    var receivedTitle: String? = null
 
-    override suspend fun getMovieDetails(id: Int): RemoteMovie? {
-        receivedId = id
+    override suspend fun getMovieDetail(title: String): Movie? {
+        receivedTitle = title
         return movieDetail
     }
 }

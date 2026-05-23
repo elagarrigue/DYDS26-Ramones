@@ -8,6 +8,6 @@ class FakeMoviesRepository(
     private val movieDetail: Movie? = null
 ) : MoviesRepository {
     override suspend fun getPopularMovies(): List<Movie> = popularMovies
-    override suspend fun getMovieDetails(id: Int): Movie? = movieDetail
+    override suspend fun getMovieDetail(title: String): Movie? = movieDetail
 }
 

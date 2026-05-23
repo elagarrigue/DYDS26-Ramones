@@ -2,6 +2,7 @@ package edu.dyds.movies.data.external.tmdb
 
 import edu.dyds.movies.data.external.MovieDetailExternalSource
 import edu.dyds.movies.data.external.MoviesListExternalSource
+import edu.dyds.movies.domain.entity.Movie
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.request.get
@@ -16,9 +17,10 @@ class TMDBMoviesExternalSource(private val httpClient: HttpClient) : MoviesListE
         }
     }
 
-    override suspend fun getMovieDetails(id: Int): RemoteMovie? {
+    override suspend fun getMovieDetail(title: String): Movie? {
         return try {
-            httpClient.get("/3/movie/$id").body<RemoteMovie>()
+            val results = httpClient.get("/3/search/movie?query=${title.replace(" ", "+")}").body<RemoteResult>().results
+            results.firstOrNull()?.toDomainMovie()
         } catch (e: Exception) {
             null
         }
