@@ -1,5 +1,6 @@
 package edu.dyds.movies.data.external
 
+import edu.dyds.movies.data.fakes.FakeMovieDetailExternalSource
 import edu.dyds.movies.domain.entity.Movie
 import kotlinx.coroutines.test.runTest
 import kotlin.test.Test
@@ -31,12 +32,6 @@ class MovieDetailExternalSourceBrokerTest {
         popularity = popularity,
         voteAverage = voteAverage
     )
-
-    private class FakeMovieDetailExternalSource(
-        private val movieToReturn: Movie? = null
-    ) : MovieDetailExternalSource {
-        override suspend fun getMovieDetail(title: String): Movie? = movieToReturn
-    }
 
     @Test
     fun `obtenerDetallePelícula debe retornar película combinada cuando tanto TMDB como OMDB retornan resultados`() = runTest {
