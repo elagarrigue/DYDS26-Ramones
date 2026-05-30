@@ -1,6 +1,6 @@
 package edu.dyds.movies.data
 
-import edu.dyds.movies.data.external.tmdb.RemoteMovie
+import edu.dyds.movies.data.external.tmdb.TMDBMovie
 import edu.dyds.movies.data.fakes.FakeLocalMoviesDataSource
 import edu.dyds.movies.data.fakes.FakeMoviesListExternalSource
 import edu.dyds.movies.data.fakes.FakeMovieDetailExternalSource
@@ -10,10 +10,10 @@ import kotlin.test.Test
 import kotlin.test.assertEquals
 
 class MoviesRepositoryImplGetPopularMoviesTest {
-    private fun makeRemoteMovie(
+    private fun makeTMDBMovie(
         id: Int = 1,
         title: String = "Movie $id"
-    ) = RemoteMovie(
+    ) = TMDBMovie(
         id = id,
         title = title,
         overview = "Overview $id",
@@ -43,17 +43,17 @@ class MoviesRepositoryImplGetPopularMoviesTest {
     )
 
     private fun makeRepository(
-        remoteMovies: List<RemoteMovie> = emptyList(),
+        tmdbMovies: List<TMDBMovie> = emptyList(),
         initialCache: List<Movie>? = null
     ) = MoviesRepositoryImpl(
-        moviesListExternalSource = FakeMoviesListExternalSource(popularMovies = remoteMovies),
+        moviesListExternalSource = FakeMoviesListExternalSource(popularMovies = tmdbMovies),
         movieDetailExternalSource = FakeMovieDetailExternalSource(),
         localMoviesDataSource = FakeLocalMoviesDataSource(initialMovies = initialCache)
     )
 
     @Test
     fun `cuando el cache esta vacio, obtiene de remoto y retorna peliculas`() = runTest {
-        val repository = makeRepository(remoteMovies = listOf(makeRemoteMovie(1), makeRemoteMovie(2)))
+        val repository = makeRepository(tmdbMovies = listOf(makeTMDBMovie(1), makeTMDBMovie(2)))
 
         val result = repository.getPopularMovies()
 
@@ -66,7 +66,7 @@ class MoviesRepositoryImplGetPopularMoviesTest {
     fun `cuando el cache esta vacio, guarda las peliculas obtenidas en el cache`() = runTest {
         val cache = FakeLocalMoviesDataSource(initialMovies = null)
         val repository = MoviesRepositoryImpl(
-            moviesListExternalSource = FakeMoviesListExternalSource(popularMovies = listOf(makeRemoteMovie(1), makeRemoteMovie(2))),
+            moviesListExternalSource = FakeMoviesListExternalSource(popularMovies = listOf(makeTMDBMovie(1), makeTMDBMovie(2))),
             movieDetailExternalSource = FakeMovieDetailExternalSource(),
             localMoviesDataSource = cache
         )
@@ -79,7 +79,7 @@ class MoviesRepositoryImplGetPopularMoviesTest {
 
     @Test
     fun `cuando el cache tiene peliculas, retorna las del cache sin consultar remoto`() = runTest {
-        val listSource = FakeMoviesListExternalSource(popularMovies = listOf(makeRemoteMovie(99)))
+        val listSource = FakeMoviesListExternalSource(popularMovies = listOf(makeTMDBMovie(99)))
         val repository = MoviesRepositoryImpl(
             moviesListExternalSource = listSource,
             movieDetailExternalSource = FakeMovieDetailExternalSource(),
@@ -95,8 +95,8 @@ class MoviesRepositoryImplGetPopularMoviesTest {
     }
 
     @Test
-    fun `mapea correctamente los campos de RemoteMovie a Movie en getPopularMovies`() = runTest {
-        val repository = makeRepository(remoteMovies = listOf(makeRemoteMovie(id = 42, title = "Inception")))
+    fun `mapea correctamente los campos de TMDBMovie a Movie en getPopularMovies`() = runTest {
+        val repository = makeRepository(tmdbMovies = listOf(makeTMDBMovie(id = 42, title = "Inception")))
 
         val movie = repository.getPopularMovies().first()
 

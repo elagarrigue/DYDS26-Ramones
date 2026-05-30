@@ -9,9 +9,9 @@ import io.ktor.client.request.get
 
 class TMDBMoviesExternalSource(private val httpClient: HttpClient) : MoviesListExternalSource,
     MovieDetailExternalSource {
-    override suspend fun getPopularMovies(): List<RemoteMovie> {
+    override suspend fun getPopularMovies(): List<TMDBMovie> {
         return try {
-            httpClient.get("/3/discover/movie?sort_by=popularity.desc").body<RemoteResult>().results
+            httpClient.get("/3/discover/movie?sort_by=popularity.desc").body<TMDBResult>().results
         } catch (e: Exception) {
             emptyList()
         }
@@ -19,7 +19,7 @@ class TMDBMoviesExternalSource(private val httpClient: HttpClient) : MoviesListE
 
     override suspend fun getMovieDetail(title: String): Movie? {
         return try {
-            val results = httpClient.get("/3/search/movie?query=${title.replace(" ", "+")}").body<RemoteResult>().results
+            val results = httpClient.get("/3/search/movie?query=${title.replace(" ", "+")}").body<TMDBResult>().results
             results.firstOrNull()?.toDomainMovie()
         } catch (e: Exception) {
             null
