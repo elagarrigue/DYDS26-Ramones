@@ -26,7 +26,7 @@ class GetMovieDetailUseCaseImplTest {
     fun `retorna la pelicula cuando el repositorio la encuentra`() = runTest {
         val useCase = GetMovieDetailUseCaseImpl(FakeMoviesRepository(movieDetail = movie))
 
-        val result = useCase(movie.id)
+        val result = useCase(movie.title)
 
         assertEquals(movie, result)
     }
@@ -35,7 +35,7 @@ class GetMovieDetailUseCaseImplTest {
     fun `retorna null cuando el repositorio no encuentra la pelicula`() = runTest {
         val useCase = GetMovieDetailUseCaseImpl(FakeMoviesRepository(movieDetail = null))
 
-        val result = useCase(1)
+        val result = useCase("Cualquier titulo")
 
         assertNull(result)
     }
